@@ -16,7 +16,7 @@ let source2 = """
 """
 
 let source3 = """
-+ - * / ** %
++ - * / ** % ^
 """
 
 let fullSource = "\(source)\n\(source2)\n\(source3)"
