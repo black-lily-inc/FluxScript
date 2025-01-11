@@ -12,7 +12,9 @@ public enum TokenType {
     case addition, subtraction, multiplication, division, modulus, exponentiation, power
     case number
     case identifier
+    case variable
 }
+
 
 public struct Token {
     public let literal: String
@@ -29,6 +31,10 @@ public class Tokenizer {
     var current: Int = 0
     var start:  Int = 0
     var line: Int = 1
+    
+    let reservedKeywords = [
+        "var": TokenType.variable
+    ]
     
     public init(source: String) {
         self.source = source
@@ -231,7 +237,15 @@ public class Tokenizer {
             literal = "\(literal)\(advance())"
         }
         
-        addToken(type: .identifier, literal: literal, startLine: line)
+        if let reservedKeywordType = reservedKeywords[literal] {
+            addToken(
+                type: reservedKeywordType,
+                literal: literal,
+                startLine: line
+            )
+        } else {
+            addToken(type: .identifier, literal: literal, startLine: line)
+        }
     }
     
     func isAlphaNumeric(_ character: Character) -> Bool {

@@ -21,6 +21,7 @@ let source3 = """
 
 let source4 = """
 funkydoodle
+var
 2 * a * 1.1 + 9^10
 """
 
