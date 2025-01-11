@@ -4,10 +4,13 @@ public enum TokenizerError: Error {
     case invalidCharacter
     case unterminatedString
     case invalidEscapeCharacter
+    case invalidNumber
 }
 
 public enum TokenType {
     case string
+    case addition, subtraction, multiplication, division, modulus, exponentiation, power
+    case number
 }
 
 public struct Token {
@@ -48,6 +51,28 @@ public class Tokenizer {
                 line += 1
             case "\"":
                 try string()
+            case "+":
+                addToken(type: .addition, literal: "+", startLine: line)
+            case "-":
+                addToken(type: .subtraction, literal: "-", startLine: line)
+            case "*":
+                if peek() == "*" {
+                    advance()
+                    addToken(type: .power, literal: "**", startLine: line)
+                    break
+                }
+                addToken(type: .multiplication, literal: "*", startLine: line)
+            case "/":
+                // TODO: Add comments & multiline comments
+                addToken(type: .division, literal: "/", startLine: line)
+            case "%":
+                addToken(type: .modulus, literal: "%", startLine: line)
+            case "^":
+                addToken(type: .exponentiation, literal: "^", startLine: line)
+            case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+                try number(first: String(literal))
+            case " ", "\t":
+                break
             default:
                 throw TokenizerError.invalidCharacter
         }
@@ -147,5 +172,35 @@ public class Tokenizer {
         } else {
             throw TokenizerError.unterminatedString
         }
+    }
+    
+    func isDigit(_ character: Character) -> Bool {
+        return character.isNumber
+    }
+    
+    func number(first: String) throws {
+        var number = first
+        while !isAtEnd() {
+            if peek() == "\n" {
+                advance()
+                line += 1
+                break
+            }
+            
+            let current = advance()
+            if current == "." && !number.contains(".") && isDigit(peek()) {
+                number += "."
+            } else if isDigit(current) {
+                number = "\(number)\(current)"
+            } else {
+                throw TokenizerError.invalidNumber
+            }
+        }
+        
+        guard Double(number) != nil else {
+            throw TokenizerError.invalidNumber
+        }
+        
+        addToken(type: .number, literal: number, startLine: line)
     }
 }
