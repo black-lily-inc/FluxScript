@@ -13,7 +13,8 @@ public enum TokenType {
 public struct Token {
     public let literal: String
     public let type: TokenType
-    public  let line: Int
+    public let lineStart: Int
+    public let lineEnd: Int
     public let start: Int
     public let end: Int
 }
@@ -23,7 +24,7 @@ public class Tokenizer {
     var tokens: [Token] = []
     var current: Int = 0
     var start:  Int = 0
-    var line: Int = 0
+    var line: Int = 1
     
     public init(source: String) {
         self.source = source
@@ -41,7 +42,6 @@ public class Tokenizer {
     
     func scanToken() throws {
         let literal = advance()
-        print(literal)
         
         switch literal {
             case "\n":
@@ -79,21 +79,37 @@ public class Tokenizer {
         return current >= source.count
     }
     
-    func addToken(type tokenType: TokenType, literal: String) {
-        let token = Token(literal: literal, type: tokenType, line: line, start: start, end: current)
+    func addToken(type tokenType: TokenType, literal: String, startLine: Int) {
+        let token = Token(
+            literal: literal,
+            type: tokenType,
+            lineStart: startLine,
+            lineEnd: line,
+            start: start,
+            end: current
+        )
         tokens.append(token)
     }
     
     func string() throws {
         var literal: String = ""
         var isQuoted: Bool = false
+        let startLine: Int = line
+        
         while !isAtEnd() {
             let character = advance()
+            // This adds support for multiline strings
             if character == "\n" {
+                let isBeforeQuoted = peek() == "\""
+                if !literal.isEmpty && !isBeforeQuoted {
+                    literal += "\n"
+                }
+                
                 line += 1
+                continue
             }
             
-            // Add support for escaping characters inside of our strings
+            // This allows us to add support for escaping characters as well!
             if character == "\\" {
                 let nextCharacter = peek()
                 if nextCharacter == "n" {
@@ -116,17 +132,18 @@ public class Tokenizer {
             
             if character != "\"" {
                 literal = "\(literal)\(character)"
-            }
-            
-            if character == "\"" {
-                advance() // Ensure  we don't add the last one
+            } else {
                 isQuoted.toggle()
                 break
             }
         }
         
         if isQuoted {
-            addToken(type: .string, literal: literal)
+            addToken(
+                type: .string,
+                literal: literal,
+                startLine: startLine
+            )
         } else {
             throw TokenizerError.unterminatedString
         }
