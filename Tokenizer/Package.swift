@@ -19,9 +19,7 @@ let package = Package(
     targets: [
         .target(
             name: "Tokenizer"),
-        .executableTarget(
-            name: "TokenizerApp",
-            dependencies: ["Tokenizer"]),
+        .executableTarget(name: "TokenizerApp",dependencies: ["Tokenizer"]),
         .testTarget(
             name: "TokenizerTests",
             dependencies: ["Tokenizer"]
