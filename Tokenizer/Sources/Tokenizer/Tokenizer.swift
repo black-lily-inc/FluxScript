@@ -5,6 +5,7 @@ public enum TokenizerError: Error {
     case unterminatedString
     case invalidEscapeCharacter
     case invalidNumber
+    case invalidTokenProcessorLiteralLengthGreaterThan0
 }
 
 public enum TokenType {
