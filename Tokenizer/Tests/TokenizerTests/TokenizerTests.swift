@@ -1,6 +1,86 @@
 import Testing
-@testable import FluxScript
+@testable import Tokenizer
 
-@Test func example() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+@Suite("Tokenizer Tests")
+struct TokenizerTests {
+    @Test(
+        arguments: [
+            (
+                "\"Hello, There!\"",
+                [
+                    Token(literal: "Hello, There!", type: .string, lineStart: 1, lineEnd: 1, start: 0, end: 15),
+                ]
+            ),
+            (
+                "\"Hello, \\\"World\\\"!\"",
+                [
+                    Token(literal: "Hello, \"World\"!", type: .string, lineStart: 1, lineEnd: 1, start: 0, end: 19),
+                ]
+            ),
+            (
+                "\"Line1\\nLine2\"",
+                [
+                    Token(literal: "Line1\nLine2", type: .string, lineStart: 1, lineEnd: 1, start: 0, end: 14),
+                ]
+            ),
+            (
+                "\"Line1\nLine2\"",
+                [
+                    Token(literal: "Line1\nLine2", type: .string, lineStart: 1, lineEnd: 2, start: 0, end: 13),
+                ]
+            ),
+            (
+                "+ - * / % ^ **",
+                [
+                    Token(literal: "+", type: .addition, lineStart: 1, lineEnd: 1, start: 0, end: 1),
+                    Token(literal: "-", type: .subtraction, lineStart: 1, lineEnd: 1, start: 2, end: 3),
+                    Token(literal: "*", type: .multiplication, lineStart: 1, lineEnd: 1, start: 4, end: 5),
+                    Token(literal: "/", type: .division, lineStart: 1, lineEnd: 1, start: 6, end: 7),
+                    Token(literal: "%", type: .modulus, lineStart: 1, lineEnd: 1, start: 8, end: 9),
+                    Token(literal: "^", type: .exponentiation, lineStart: 1, lineEnd: 1, start: 10, end: 11),
+                    Token(literal: "**", type: .power, lineStart: 1, lineEnd: 1, start: 12, end: 14),
+                ]
+            ),
+            (
+                "123",
+                [
+                    Token(literal: "123", type: .number, lineStart: 1, lineEnd: 1, start: 0, end: 3),
+                ]
+            ),
+            (
+                "3.14",
+                [
+                    Token(literal: "3.14", type: .number, lineStart: 1, lineEnd: 1, start: 0, end: 4),
+                ]
+            ),
+            (
+                """
+                "this is a test"
+                "string 2"
+                "Bob Said: \\"Hi, How are you?\\""
+                "
+                Bob Said:
+                \\"What are you doing?\\"
+                "
+                """,
+                [
+                    Token(literal: "this is a test", type: .string, lineStart: 1, lineEnd: 1, start: 0, end: 16),
+                    Token(literal: "string 2", type: .string, lineStart: 2, lineEnd: 2, start: 17, end: 27),
+                    Token(literal: "Bob Said: \"Hi, How are you?\"", type: .string, lineStart: 3, lineEnd: 3, start: 28, end: 60),
+                    Token(literal: "Bob Said:\n\"What are you doing?\"", type: .string, lineStart: 4, lineEnd: 7, start: 61, end: 98)
+                ]
+            ),
+            (
+                """
+                var someValue = "123"
+                """,
+                [
+                ]
+            )
+        ]
+    ) func parseStrings(input: String, expectedOutputs: [Token]) throws {
+        let tokenizer = Tokenizer(source: input)
+        let tokens = try tokenizer.scanTokens()
+        #expect(tokens == expectedOutputs)
+    }
 }
