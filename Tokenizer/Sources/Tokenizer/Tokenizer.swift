@@ -5,13 +5,17 @@ public enum TokenizerError: Error {
     case unterminatedString
     case invalidEscapeCharacter
     case invalidNumber
+    case invalidTokenProcessorLiteralLengthGreaterThan0
 }
 
 public enum TokenType {
     case string
     case addition, subtraction, multiplication, division, modulus, exponentiation, power
     case number
+    case identifier
+    case variable
 }
+
 
 public struct Token {
     public let literal: String
@@ -28,6 +32,10 @@ public class Tokenizer {
     var current: Int = 0
     var start:  Int = 0
     var line: Int = 1
+    
+    let reservedKeywords = [
+        "var": TokenType.variable
+    ]
     
     public init(source: String) {
         self.source = source
@@ -71,6 +79,8 @@ public class Tokenizer {
                 addToken(type: .exponentiation, literal: "^", startLine: line)
             case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
                 try number(first: String(literal))
+            case _ where literal.isLetter:
+                try identifier(first: literal)
             case " ", "\t":
                 break
             default:
@@ -181,19 +191,32 @@ public class Tokenizer {
     func number(first: String) throws {
         var number = first
         while !isAtEnd() {
-            if peek() == "\n" {
+            let next = peek()
+            if next == "\n" {
                 advance()
                 line += 1
                 break
             }
             
+            if next == " " {
+                advance()
+                break
+            }
+            
+            if !isDigit(next) && next != "." {
+                break
+            }
+            
             let current = advance()
-            if current == "." && !number.contains(".") && isDigit(peek()) {
-                number += "."
-            } else if isDigit(current) {
-                number = "\(number)\(current)"
-            } else {
+            
+            if current == "." && number.contains(".") {
                 throw TokenizerError.invalidNumber
+            }
+            
+            if current == "." && isDigit(peek()) {
+                number += "."
+            } else {
+                number = "\(number)\(current)"
             }
         }
         
@@ -202,5 +225,31 @@ public class Tokenizer {
         }
         
         addToken(type: .number, literal: number, startLine: line)
+    }
+    
+    func identifier(first: Character) throws {
+        var literal: String = "\(first)"
+        
+        while !isAtEnd() {
+            if !isAlphaNumeric(peek()) {
+                break
+            }
+            
+            literal = "\(literal)\(advance())"
+        }
+        
+        if let reservedKeywordType = reservedKeywords[literal] {
+            addToken(
+                type: reservedKeywordType,
+                literal: literal,
+                startLine: line
+            )
+        } else {
+            addToken(type: .identifier, literal: literal, startLine: line)
+        }
+    }
+    
+    func isAlphaNumeric(_ character: Character) -> Bool {
+        return character.isLetter || character.isNumber
     }
 }
