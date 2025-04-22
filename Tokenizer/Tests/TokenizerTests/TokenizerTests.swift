@@ -72,9 +72,12 @@ struct TokenizerTests {
             ),
             (
                 """
-                var someValue = "123"
+                funkydoodle
+                var
                 """,
                 [
+                    Token(literal: "funkydoodle", type: .identifier, lineStart: 1, lineEnd: 1, start: 0, end: 11),
+                    Token(literal: "var", type: .variable, lineStart: 2, lineEnd: 2, start: 12, end: 15)
                 ]
             )
         ]

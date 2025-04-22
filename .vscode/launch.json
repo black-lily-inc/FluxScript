@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/Tokenizer",
+            "name": "Debug TokenizerApp (Tokenizer)",
+            "program": "${workspaceFolder:FluxScript}/Tokenizer/.build/debug/TokenizerApp",
+            "preLaunchTask": "swift: Build Debug TokenizerApp (Tokenizer)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/Tokenizer",
+            "name": "Release TokenizerApp (Tokenizer)",
+            "program": "${workspaceFolder:FluxScript}/Tokenizer/.build/release/TokenizerApp",
+            "preLaunchTask": "swift: Build Release TokenizerApp (Tokenizer)"
+        }
+    ]
+}
