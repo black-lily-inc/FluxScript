@@ -86,4 +86,19 @@ struct TokenizerTests {
         let tokens = try tokenizer.scanTokens()
         #expect(tokens == expectedOutputs)
     }
+
+    @Test(
+        arguments: [
+            ("\"unterminated", TokenizerError.unterminatedString),
+            ("\"Bad escape: \\q\"", TokenizerError.invalidEscapeCharacter),
+            ("3.1.4", TokenizerError.invalidNumber),
+            ("$", TokenizerError.invalidCharacter),
+        ]
+    )
+    func errorCases(input: String, error: TokenizerError) throws {
+        let tokenizer = Tokenizer(source: input)
+        #expect(throws: error) {
+            try tokenizer.scanTokens()
+        }
+    }
 }
