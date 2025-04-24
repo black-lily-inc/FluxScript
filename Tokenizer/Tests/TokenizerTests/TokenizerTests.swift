@@ -79,6 +79,57 @@ struct TokenizerTests {
                     Token(literal: "funkydoodle", type: .identifier, lineStart: 1, lineEnd: 1, start: 0, end: 11),
                     Token(literal: "var", type: .variable, lineStart: 2, lineEnd: 2, start: 12, end: 15)
                 ]
+            ),
+            (
+                "\"\"",
+                [Token(literal: "", type: .string, lineStart: 1, lineEnd: 1, start: 0, end: 2)]
+            ),
+            (
+                "\"C:\\\\Path\\\\to\\\\file\"",
+                [Token(literal: "C:\\Path\\to\\file", type: .string, lineStart: 1, lineEnd: 1, start: 0, end: 20)]
+            ),
+            (
+                "* *",
+                [
+                    Token(literal: "*", type: .multiplication, lineStart: 1, lineEnd: 1, start: 0, end: 1),
+                    Token(literal: "*", type: .multiplication, lineStart: 1, lineEnd: 1, start: 2, end: 3)
+                ]
+            ),
+            (
+                """
+                123
+
+                456
+                """,
+                [
+                    Token(literal: "123", type: .number, lineStart: 2, lineEnd: 2, start: 0, end: 4),
+                    Token(literal: "456", type: .number, lineStart: 3, lineEnd: 3, start: 5, end: 8)
+                ]
+            ),
+            (
+                "var123",
+                [Token(literal: "var123", type: .identifier, lineStart: 1, lineEnd: 1, start: 0, end: 6)]
+            ),
+            (
+                "-5",
+                [
+                    Token(literal: "-", type: .subtraction, lineStart: 1, lineEnd: 1, start: 0, end: 1),
+                    Token(literal: "5", type: .number, lineStart: 1, lineEnd: 1, start: 1, end: 2)
+                ]
+            ),
+            (
+                "***",
+                [
+                    Token(literal: "**", type: .power, lineStart: 1, lineEnd: 1, start: 0, end: 2),
+                    Token(literal: "*", type: .multiplication, lineStart: 1, lineEnd: 1, start: 2, end: 3)
+                ]
+            ),
+            (
+                "^ ^",
+                [
+                    Token(literal: "^", type: .exponentiation, lineStart: 1, lineEnd: 1, start: 0, end: 1),
+                    Token(literal: "^", type: .exponentiation, lineStart: 1, lineEnd: 1, start: 2, end: 3)
+                ]
             )
         ]
     ) func parseStrings(input: String, expectedOutputs: [Token]) throws {
@@ -102,3 +153,16 @@ struct TokenizerTests {
         }
     }
 }
+
+// (
+//     tokens → [
+//         Tokenizer.Token(literal: "123", type: Tokenizer.TokenType.number, lineStart: 2, lineEnd: 2, start: 0, end: 4),
+//         Tokenizer.Token(literal: "456", type: Tokenizer.TokenType.number, lineStart: 3, lineEnd: 3, start: 5, end: 8)
+//     ]
+// ) ==
+// (
+//     expectedOutputs → [
+//         Tokenizer.Token(literal: "123", type: Tokenizer.TokenType.number, lineStart: 1, lineEnd: 1, start: 0, end: 3),
+//         Tokenizer.Token(literal: "456", type: Tokenizer.TokenType.number, lineStart: 3, lineEnd: 3, start: 6, end: 9)
+//     ]
+// )
