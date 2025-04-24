@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Tokenizer}",
+            "name": "Debug TokenizerApp",
+            "program": "${workspaceFolder:Tokenizer}/.build/debug/TokenizerApp",
+            "preLaunchTask": "swift: Build Debug TokenizerApp"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Tokenizer}",
+            "name": "Release TokenizerApp",
+            "program": "${workspaceFolder:Tokenizer}/.build/release/TokenizerApp",
+            "preLaunchTask": "swift: Build Release TokenizerApp"
+        }
+    ]
+}
