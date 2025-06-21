@@ -16,6 +16,7 @@ public enum TokenType: Sendable {
     case variable
     case assignment
     case equality
+    case leftparen, rightparen, leftbrace, rightbrace, comma, dot, semicolon, colon
 }
 
 
@@ -57,6 +58,22 @@ public class Tokenizer {
         let literal = advance()
 
         switch literal {
+            case "(":
+                addToken(type: .leftparen, literal: "(", startLine: line)
+            case ")":
+                addToken(type: .rightparen, literal: ")", startLine: line)
+            case "[":
+                addToken(type: .leftbrace, literal: "[", startLine: line)
+            case "]":
+                addToken(type: .rightbrace, literal: "]", startLine: line)
+            case ",":
+                addToken(type: .comma, literal: ",", startLine: line)
+            case ".":
+                addToken(type: .dot, literal: ".", startLine: line)
+            case ";":
+                addToken(type: .semicolon, literal: ";", startLine: line)
+            case ":":
+                addToken(type: .colon, literal: ":", startLine: line)
             case "\n":
                 line += 1
             case "\"":
