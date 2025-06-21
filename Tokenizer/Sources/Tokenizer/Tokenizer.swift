@@ -14,6 +14,8 @@ public enum TokenType: Sendable {
     case number
     case identifier
     case variable
+    case assignment
+    case equality
 }
 
 
@@ -83,6 +85,13 @@ public class Tokenizer {
                 try identifier(first: literal)
             case " ", "\t":
                 break
+            case "=":
+                if peek() == "=" {
+                    advance()
+                    addToken(type: .equality, literal: "==", startLine: line)
+                    break
+                }
+                addToken(type: .assignment, literal: "=", startLine: line)
             default:
                 throw TokenizerError.invalidCharacter
         }
