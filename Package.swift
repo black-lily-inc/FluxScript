@@ -16,10 +16,16 @@ let package = Package(
         ),
         .executable(
             name: "fluxscript",
-            targets: ["FluxScriptCLI"]),
+            targets: ["FluxScriptCLI"]
+        ),
+        .executable(
+            name: "GenerateAST",
+            targets: ["GenerateAST"]
+        ),
     ],
     dependencies: [
-        .package(path: "./Tokenizer")
+        .package(path: "./Tokenizer"),
+        .package(path: "./AST")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,12 +33,18 @@ let package = Package(
         .target(
             name: "FluxScript",
             dependencies: [
-                .product(name: "Tokenizer", package: "Tokenizer")
+                .product(name: "Tokenizer", package: "Tokenizer"),
+                .product(name: "AST", package: "AST")
             ]
         ),
         .executableTarget(
             name: "FluxScriptCLI",
-            dependencies: ["FluxScript"]),
+            dependencies: ["FluxScript"]
+        ),
+        .executableTarget(
+            name: "GenerateAST",
+            dependencies: []
+        ),
         .testTarget(
             name: "FluxScriptTests",
             dependencies: ["FluxScript"]
