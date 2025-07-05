@@ -19,8 +19,23 @@ public enum TokenType: Sendable {
     case leftparen, rightparen, leftbrace, rightbrace, comma, dot, semicolon, colon
 }
 
-
 public struct Token: Equatable, Sendable {
+    public init(
+        literal: String,
+        type: TokenType,
+        lineStart: Int = 0,
+        lineEnd: Int = 0,
+        start: Int = 0,
+        end: Int = 0
+    ) {
+        self.literal = literal
+        self.type = type
+        self.lineStart = lineStart
+        self.lineEnd = lineEnd
+        self.start = start
+        self.end = end
+    }
+
     public let literal: String
     public let type: TokenType
     public let lineStart: Int
@@ -33,11 +48,11 @@ public class Tokenizer {
     let source: String
     var tokens: [Token] = []
     var current: Int = 0
-    var start:  Int = 0
+    var start: Int = 0
     var line: Int = 1
 
     let reservedKeywords = [
-        "var": TokenType.variable
+        "var": TokenType.variable,
     ]
 
     public init(source: String) {
@@ -58,59 +73,59 @@ public class Tokenizer {
         let literal = advance()
 
         switch literal {
-            case "(":
-                addToken(type: .leftparen, literal: "(", startLine: line)
-            case ")":
-                addToken(type: .rightparen, literal: ")", startLine: line)
-            case "[":
-                addToken(type: .leftbrace, literal: "[", startLine: line)
-            case "]":
-                addToken(type: .rightbrace, literal: "]", startLine: line)
-            case ",":
-                addToken(type: .comma, literal: ",", startLine: line)
-            case ".":
-                addToken(type: .dot, literal: ".", startLine: line)
-            case ";":
-                addToken(type: .semicolon, literal: ";", startLine: line)
-            case ":":
-                addToken(type: .colon, literal: ":", startLine: line)
-            case "\n":
-                line += 1
-            case "\"":
-                try string()
-            case "+":
-                addToken(type: .addition, literal: "+", startLine: line)
-            case "-":
-                addToken(type: .subtraction, literal: "-", startLine: line)
-            case "*":
-                if peek() == "*" {
-                    advance()
-                    addToken(type: .power, literal: "**", startLine: line)
-                    break
-                }
-                addToken(type: .multiplication, literal: "*", startLine: line)
-            case "/":
-                // TODO: Add comments & multiline comments
-                addToken(type: .division, literal: "/", startLine: line)
-            case "%":
-                addToken(type: .modulus, literal: "%", startLine: line)
-            case "^":
-                addToken(type: .exponentiation, literal: "^", startLine: line)
-            case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
-                try number(first: String(literal))
-            case _ where literal.isLetter:
-                try identifier(first: literal)
-            case " ", "\t":
+        case "(":
+            addToken(type: .leftparen, literal: "(", startLine: line)
+        case ")":
+            addToken(type: .rightparen, literal: ")", startLine: line)
+        case "[":
+            addToken(type: .leftbrace, literal: "[", startLine: line)
+        case "]":
+            addToken(type: .rightbrace, literal: "]", startLine: line)
+        case ",":
+            addToken(type: .comma, literal: ",", startLine: line)
+        case ".":
+            addToken(type: .dot, literal: ".", startLine: line)
+        case ";":
+            addToken(type: .semicolon, literal: ";", startLine: line)
+        case ":":
+            addToken(type: .colon, literal: ":", startLine: line)
+        case "\n":
+            line += 1
+        case "\"":
+            try string()
+        case "+":
+            addToken(type: .addition, literal: "+", startLine: line)
+        case "-":
+            addToken(type: .subtraction, literal: "-", startLine: line)
+        case "*":
+            if peek() == "*" {
+                advance()
+                addToken(type: .power, literal: "**", startLine: line)
                 break
-            case "=":
-                if peek() == "=" {
-                    advance()
-                    addToken(type: .equality, literal: "==", startLine: line)
-                    break
-                }
-                addToken(type: .assignment, literal: "=", startLine: line)
-            default:
-                throw TokenizerError.invalidCharacter
+            }
+            addToken(type: .multiplication, literal: "*", startLine: line)
+        case "/":
+            // TODO: Add comments & multiline comments
+            addToken(type: .division, literal: "/", startLine: line)
+        case "%":
+            addToken(type: .modulus, literal: "%", startLine: line)
+        case "^":
+            addToken(type: .exponentiation, literal: "^", startLine: line)
+        case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+            try number(first: String(literal))
+        case _ where literal.isLetter:
+            try identifier(first: literal)
+        case " ", "\t":
+            break
+        case "=":
+            if peek() == "=" {
+                advance()
+                addToken(type: .equality, literal: "==", startLine: line)
+                break
+            }
+            addToken(type: .assignment, literal: "=", startLine: line)
+        default:
+            throw TokenizerError.invalidCharacter
         }
     }
 
@@ -153,8 +168,8 @@ public class Tokenizer {
     }
 
     func string() throws {
-        var literal: String = ""
-        var isQuoted: Bool = false
+        var literal = ""
+        var isQuoted = false
         let startLine: Int = line
 
         while !isAtEnd() {
@@ -162,7 +177,7 @@ public class Tokenizer {
             // This adds support for multiline strings
             if character == "\n" {
                 let isBeforeQuoted = peek() == "\""
-                if !literal.isEmpty && !isBeforeQuoted {
+                if !literal.isEmpty, !isBeforeQuoted {
                     literal += "\n"
                 }
 
@@ -183,7 +198,7 @@ public class Tokenizer {
                     advance()
                     literal += "\\"
                 } else if nextCharacter == "\"" {
-                   advance()
+                    advance()
                     literal += "\""
                 } else {
                     throw TokenizerError.invalidEscapeCharacter
@@ -227,17 +242,17 @@ public class Tokenizer {
                 break
             }
 
-            if !isDigit(next) && next != "." {
+            if !isDigit(next), next != "." {
                 break
             }
 
             let current = advance()
 
-            if current == "." && number.contains(".") {
+            if current == ".", number.contains(".") {
                 throw TokenizerError.invalidNumber
             }
 
-            if current == "." && isDigit(peek()) {
+            if current == ".", isDigit(peek()) {
                 number += "."
             } else {
                 number = "\(number)\(current)"
@@ -252,7 +267,7 @@ public class Tokenizer {
     }
 
     func identifier(first: Character) throws {
-        var literal: String = "\(first)"
+        var literal = "\(first)"
 
         while !isAtEnd() {
             if !isAlphaNumeric(peek()) {

@@ -10,7 +10,13 @@
     "install:all": "npx npm-run-all --sequential install:swiftlint install:swiftformat config",
     "format": "swiftformat .",
     "lint": "swiftlint --config=.swiftlint.yml .",
-    "update:submmdules": "git submodule foreach --recursive 'branch=$(git remote show origin | awk \"/HEAD branch/ {print \\$NF}\"); git checkout $branch && git pull origin $branch' && CHANGED=$(git status --porcelain | grep '^ M \\.dotfiles' || true) && if [ -n \"$CHANGED\" ]; then npm run config; fi && git add -A && git commit -m \"chore: update submodules\" || echo 'No changes to commit'"
+    "update:submmdules": "git submodule foreach --recursive 'branch=$(git remote show origin | awk \"/HEAD branch/ {print \\$NF}\"); git checkout $branch && git pull origin $branch' && CHANGED=$(git status --porcelain | grep '^ M \\.dotfiles' || true) && if [ -n \"$CHANGED\" ]; then npm run config; fi && git add -A && git commit -m \"chore: update submodules\" || echo 'No changes to commit'",
+    "compile:lang": "cd Lang && swift build",
+    "compile:token": "cd Tokenizer && swift build",
+    "compile:ast": "cd AST && swift build",
+    "lang:shell": "cd Lang && swift run fluxscript",
+    "lang:astgen": "cd Lang && swift run GenerateAST",
+    "ast:prettyprint": "cd AST && swift run prettyprint"
   },
   "repository": {
     "type": "git",

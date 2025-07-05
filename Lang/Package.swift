@@ -24,8 +24,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "./Tokenizer"),
-        .package(path: "./AST")
+        .package(path: "../Tokenizer"),
+        .package(path: "../AST")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

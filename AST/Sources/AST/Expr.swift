@@ -2,20 +2,16 @@ import Foundation
 import Tokenizer
 
 public protocol Expr {
+    func accept<V: ExprVisitor, R>(visitor: V) throws -> R where R == V.ExprVisitorReturnType
 }
 
-public extension Expr {
-    func accept<V: ExprVisitor, R>(visitor: V) throws -> R where R == V.ExprVisitorReturnType {
-        fatalError()
-    }
-}
 public protocol ExprVisitor {
     associatedtype ExprVisitorReturnType
-    
-    func visitBinaryExpr(_ expr: Binary) -> ExprVisitorReturnType
-    func visitGroupingExpr(_ expr: Grouping) -> ExprVisitorReturnType
-    func visitLiteralExpr(_ expr: Literal) -> ExprVisitorReturnType
-    func visitUnaryExpr(_ expr: Unary) -> ExprVisitorReturnType
+
+    func visitBinaryExpr(_ expr: Binary) throws -> ExprVisitorReturnType
+    func visitGroupingExpr(_ expr: Grouping) throws -> ExprVisitorReturnType
+    func visitLiteralExpr(_ expr: Literal) throws -> ExprVisitorReturnType
+    func visitUnaryExpr(_ expr: Unary) throws -> ExprVisitorReturnType
 }
 
 public struct Binary: Expr {
@@ -30,7 +26,7 @@ public struct Binary: Expr {
     }
 
     public func accept<V: ExprVisitor, R>(visitor: V) throws -> R where R == V.ExprVisitorReturnType {
-        return visitor.visitBinaryExpr(self)
+        return try visitor.visitBinaryExpr(self)
     }
 }
 
@@ -42,19 +38,19 @@ public struct Grouping: Expr {
     }
 
     public func accept<V: ExprVisitor, R>(visitor: V) throws -> R where R == V.ExprVisitorReturnType {
-        return visitor.visitGroupingExpr(self)
+        return try visitor.visitGroupingExpr(self)
     }
 }
 
 public struct Literal: Expr {
-    public let value: Any
+    public let value: Any?
 
-    public init(value: Any) {
+    public init(value: Any?) {
         self.value = value
     }
 
     public func accept<V: ExprVisitor, R>(visitor: V) throws -> R where R == V.ExprVisitorReturnType {
-        return visitor.visitLiteralExpr(self)
+        return try visitor.visitLiteralExpr(self)
     }
 }
 
@@ -68,7 +64,7 @@ public struct Unary: Expr {
     }
 
     public func accept<V: ExprVisitor, R>(visitor: V) throws -> R where R == V.ExprVisitorReturnType {
-        return visitor.visitUnaryExpr(self)
+        return try visitor.visitUnaryExpr(self)
     }
 }
 

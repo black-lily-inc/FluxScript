@@ -17,6 +17,60 @@
             "name": "Release TokenizerApp (Tokenizer)",
             "program": "${workspaceFolder:FluxScript}/Tokenizer/.build/release/TokenizerApp",
             "preLaunchTask": "swift: Build Release TokenizerApp (Tokenizer)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/Lang",
+            "name": "Debug fluxscript (Lang)",
+            "program": "${workspaceFolder:FluxScript}/Lang/.build/debug/fluxscript",
+            "preLaunchTask": "swift: Build Debug fluxscript (Lang)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/Lang",
+            "name": "Release fluxscript (Lang)",
+            "program": "${workspaceFolder:FluxScript}/Lang/.build/release/fluxscript",
+            "preLaunchTask": "swift: Build Release fluxscript (Lang)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/Lang",
+            "name": "Debug GenerateAST (Lang)",
+            "program": "${workspaceFolder:FluxScript}/Lang/.build/debug/GenerateAST",
+            "preLaunchTask": "swift: Build Debug GenerateAST (Lang)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/Lang",
+            "name": "Release GenerateAST (Lang)",
+            "program": "${workspaceFolder:FluxScript}/Lang/.build/release/GenerateAST",
+            "preLaunchTask": "swift: Build Release GenerateAST (Lang)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/AST",
+            "name": "Debug prettyprint (AST)",
+            "program": "${workspaceFolder:FluxScript}/AST/.build/debug/prettyprint",
+            "preLaunchTask": "swift: Build Debug prettyprint (AST)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:FluxScript}/AST",
+            "name": "Release prettyprint (AST)",
+            "program": "${workspaceFolder:FluxScript}/AST/.build/release/prettyprint",
+            "preLaunchTask": "swift: Build Release prettyprint (AST)"
         }
     ]
 }
